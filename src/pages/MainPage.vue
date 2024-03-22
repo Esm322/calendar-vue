@@ -1,16 +1,65 @@
 <template>
   <div class="container">
-    <button class="btn-switch btn-reset">click</button>
+    <button class="btn-switch btn-reset"
+    @click="changeLang">
+      {{ switchText }}
+    </button>
 
-    <CalendarRu/>
+    <CalendarRu v-if="isLangRus"
+    :days="getCalendarDays"
+    :current-day="currentDay"/>
 
-    <CalendarEng/>
+    <CalendarEng v-else
+    :days="getCalendarDays"
+    :current-day="currentDay"/>
   </div>
 </template>
 
 <script setup>
+import { ref, computed, provide } from 'vue';
 import CalendarRu from '@/components/CalendarRu.vue';
 import CalendarEng from '@/components/CalendarEng.vue';
+
+const date = ref(new Date());
+const currentYear = ref(date.value.getFullYear());
+const currentMonth = ref(date.value.getMonth());
+const currentDay = ref(date.value.getDate());
+const isLangRus = ref(true);
+const switchText = ref('Сменить язык');
+
+const getCalendarDays = computed(() => {
+  const result = [];
+  const month = currentMonth.value;
+  const firstDayMonth = new Date(currentYear.value, currentMonth.value, 1);
+
+  firstDayMonth.setDate(firstDayMonth.getDate() - (((firstDayMonth.getDay() || 7) - 1) || 7));
+
+  for (let i = 0; i < 42; i += 1, firstDayMonth.setDate(firstDayMonth.getDate() + 1)) {
+    result.push({
+      date: firstDayMonth.getDate(),
+      currentMonth: firstDayMonth.getMonth() === month,
+      id: Math.random(3000),
+    });
+  }
+
+  return result;
+});
+
+const changeMonth = (step) => {
+  date.value = new Date(date.value.setMonth(date.value.getMonth() + step));
+};
+
+const changeLang = () => {
+  if (isLangRus.value) {
+    switchText.value = 'Switch language';
+    isLangRus.value = false;
+  } else {
+    switchText.value = 'Сменить язык';
+    isLangRus.value = true;
+  }
+};
+
+provide('changeMonth', changeMonth);
 </script>
 
 <style lang="scss">
