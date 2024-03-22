@@ -7,11 +7,17 @@
 
     <CalendarRu v-if="isLangRus"
     :days="getCalendarDays"
-    :current-day="currentDay"/>
+    :current-day="currentDay"
+    :current-month="currentMonth"
+    :current-year="currentYear"
+    :date="date"/>
 
     <CalendarEng v-else
     :days="getCalendarDays"
-    :current-day="currentDay"/>
+    :current-day="currentDay"
+    :current-month="currentMonth"
+    :current-year="currentYear"
+    :date="date"/>
   </div>
 </template>
 
@@ -29,8 +35,8 @@ const switchText = ref('Сменить язык');
 
 const getCalendarDays = computed(() => {
   const result = [];
-  const month = currentMonth.value;
-  const firstDayMonth = new Date(currentYear.value, currentMonth.value, 1);
+  const month = date.value.getMonth();
+  const firstDayMonth = new Date(date.value.getFullYear(), month, 1);
 
   firstDayMonth.setDate(firstDayMonth.getDate() - (((firstDayMonth.getDay() || 7) - 1) || 7));
 
@@ -121,6 +127,14 @@ body {
         color: #bcbcbc;
         text-align: center;
         cursor: pointer;
+      }
+
+      .list__item-day--current-month {
+        color: #000;
+      }
+
+      .list__item-day--active {
+        outline: 1px solid #1061d1;
       }
     }
   }
